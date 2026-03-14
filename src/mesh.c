@@ -42,7 +42,7 @@ void load_cube_mesh_data(void) {
   }
 }
 
-bool load_mesh_data(char *filename) {
+bool load_obj_file_data(char *filename) {
   FILE *fptr;
   fptr = fopen(filename, "r");
   if (!fptr) {

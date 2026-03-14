@@ -35,7 +35,7 @@ void setup(void) {
     is_running = false;
   }
 
-  bool loaded = load_mesh_data(filename);
+  bool loaded = load_obj_file_data(filename);
   if (!loaded) {
     fprintf(stderr, "Error loading mesh data from: '%s'", filename);
     is_running = false;
