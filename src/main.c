@@ -12,6 +12,7 @@ int fov_factor = 640;
 bool is_running = false;
 vec3_t camera_position = {0, 0, -5};
 int previous_tick = 0;
+char *filename = "./assets/f22.obj";
 
 triangle_t *triangles_to_render = NULL;
 
@@ -34,7 +35,11 @@ void setup(void) {
     is_running = false;
   }
 
-  load_cube_mesh_data();
+  bool loaded = load_mesh_data(filename);
+  if (!loaded) {
+    fprintf(stderr, "Error loading mesh data from: '%s'", filename);
+    is_running = false;
+  }
 }
 
 void process_input(void) {

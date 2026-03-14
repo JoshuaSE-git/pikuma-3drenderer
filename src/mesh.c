@@ -41,3 +41,28 @@ void load_cube_mesh_data(void) {
     array_push(mesh.faces, face)
   }
 }
+
+bool load_mesh_data(char *filename) {
+  FILE *fptr;
+  fptr = fopen(filename, "r");
+  if (!fptr) {
+    return false;
+  }
+
+  char buf[1024];
+  while (fgets(buf, sizeof(buf), fptr) != NULL) {
+    if (buf[0] == 'v' && buf[1] == ' ') {
+      vec3_t vertex;
+      sscanf(buf, "v %f %f %f", &vertex.x, &vertex.y, &vertex.z);
+      array_push(mesh.vertices, vertex);
+    } else if (buf[0] == 'f') {
+      face_t face;
+      sscanf(buf, "f %d/%*d/%*d %d/%*d/%*d %d/%*d/%*d", &face.a, &face.b,
+             &face.c);
+      array_push(mesh.faces, face);
+    }
+  }
+
+  fclose(fptr);
+  return true;
+}
