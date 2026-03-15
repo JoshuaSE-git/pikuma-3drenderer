@@ -8,11 +8,11 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define FILENAME "./assets/f22.obj"
+#define FILENAME "./assets/cube.obj"
 #define FOV_FACTOR 640
 
 bool is_running = false;
-vec3_t camera_position = {0, 0, -5};
+vec3_t camera_position = {0, 0, 0};
 int previous_tick = 0;
 
 triangle_t *triangles_to_render = NULL;
@@ -75,8 +75,8 @@ void update(void) {
   previous_tick = SDL_GetTicks();
 
   mesh.rotation.x += 0.01;
-  mesh.rotation.y += 0.00;
-  mesh.rotation.z += 0.00;
+  mesh.rotation.y += 0.01;
+  mesh.rotation.z += 0.01;
 
   triangles_to_render = NULL;
 
@@ -89,7 +89,7 @@ void update(void) {
     face_vertices[1] = mesh.vertices[mesh_face.b - 1];
     face_vertices[2] = mesh.vertices[mesh_face.c - 1];
 
-    triangle_t transformed_triangle;
+    vec3_t transformed_vertices[3];
     for (int j = 0; j < 3; j++) {
       vec3_t transformed_vertex = face_vertices[j];
 
@@ -97,9 +97,26 @@ void update(void) {
       transformed_vertex = vec3_rotate_y(transformed_vertex, mesh.rotation.y);
       transformed_vertex = vec3_rotate_z(transformed_vertex, mesh.rotation.z);
 
-      transformed_vertex.z -= camera_position.z;
+      transformed_vertex.z += 5;
 
-      vec2_t projected_point = project(transformed_vertex);
+      transformed_vertices[j] = transformed_vertex;
+    }
+
+    vec3_t a = vec3_sub(transformed_vertices[1], transformed_vertices[0]);
+    vec3_t b = vec3_sub(transformed_vertices[2], transformed_vertices[0]);
+
+    vec3_t camera_ray = vec3_sub(camera_position, transformed_vertices[0]);
+    vec3_t normal = vec3_cross(a, b);
+
+    float alignment = vec3_dot(camera_ray, normal);
+
+    if (alignment < 0) {
+      continue;
+    }
+
+    triangle_t transformed_triangle;
+    for (int j = 0; j < 3; j++) {
+      vec2_t projected_point = project(transformed_vertices[j]);
 
       projected_point.x += (window_width / 2.0);
       projected_point.y += (window_height / 2.0);

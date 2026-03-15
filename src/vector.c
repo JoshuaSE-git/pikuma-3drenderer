@@ -74,3 +74,7 @@ vec3_t vec3_cross(vec3_t a, vec3_t b) {
                    (a.x * b.y) - (a.y * b.x)};
   return vector;
 }
+
+float vec3_dot(vec3_t a, vec3_t b) {
+  return (a.x * b.x) + (a.y * b.y) + (a.z * b.z);
+}
