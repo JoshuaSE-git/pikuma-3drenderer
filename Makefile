@@ -12,5 +12,5 @@ debug:
 
 memcheck:
 	gcc -g -O0 -std=c99 ./src/*.c -lSDL2 -lm -o renderer-debug
-	valgrind --leak-check=full ./renderer-debug
+	valgrind --leak-check=full -s ./renderer-debug
 	rm renderer-debug

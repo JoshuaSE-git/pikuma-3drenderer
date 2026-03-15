@@ -104,9 +104,13 @@ void update(void) {
 
     vec3_t a = vec3_sub(transformed_vertices[1], transformed_vertices[0]);
     vec3_t b = vec3_sub(transformed_vertices[2], transformed_vertices[0]);
+    vec3_normalize(&a);
+    vec3_normalize(&b);
 
     vec3_t camera_ray = vec3_sub(camera_position, transformed_vertices[0]);
     vec3_t normal = vec3_cross(a, b);
+
+    vec3_normalize(&normal);
 
     float alignment = vec3_dot(camera_ray, normal);
 
