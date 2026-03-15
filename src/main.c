@@ -8,11 +8,12 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-int fov_factor = 640;
+#define FILENAME "./assets/f22.obj"
+#define FOV_FACTOR 640
+
 bool is_running = false;
 vec3_t camera_position = {0, 0, -5};
 int previous_tick = 0;
-char *filename = "./assets/f22.obj";
 
 triangle_t *triangles_to_render = NULL;
 
@@ -35,9 +36,9 @@ void setup(void) {
     is_running = false;
   }
 
-  bool loaded = load_obj_file_data(filename);
+  bool loaded = load_obj_file_data(FILENAME);
   if (!loaded) {
-    fprintf(stderr, "Error loading mesh data from: '%s'", filename);
+    fprintf(stderr, "Error loading mesh data from: '%s'", FILENAME);
     is_running = false;
   }
 }
@@ -59,8 +60,8 @@ void process_input(void) {
 }
 
 vec2_t project(vec3_t point) {
-  vec2_t projected_point = {fov_factor * (point.x / point.z),
-                            fov_factor * (point.y / point.z)};
+  vec2_t projected_point = {FOV_FACTOR * (point.x / point.z),
+                            FOV_FACTOR * (point.y / point.z)};
 
   return projected_point;
 }
@@ -74,8 +75,8 @@ void update(void) {
   previous_tick = SDL_GetTicks();
 
   mesh.rotation.x += 0.01;
-  mesh.rotation.y += 0.01;
-  mesh.rotation.z += 0.01;
+  mesh.rotation.y += 0.00;
+  mesh.rotation.z += 0.00;
 
   triangles_to_render = NULL;
 
