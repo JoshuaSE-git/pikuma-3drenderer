@@ -136,6 +136,7 @@ void render(void) {
   clear_color_buffer(0xFF000000);
   draw_grid();
 
+  /*
   int num_triangle_faces = array_length(triangles_to_render);
   for (int i = 0; i < num_triangle_faces; i++) {
     triangle_t triangle = triangles_to_render[i];
@@ -150,6 +151,9 @@ void render(void) {
                   triangle.points[1].x, triangle.points[1].y,
                   triangle.points[2].x, triangle.points[2].y, 0xFFFFA500);
   }
+  */
+
+  draw_filled_triangle(300, 100, 50, 400, 500, 700, 0xFF00FF00);
 
   render_color_buffer();
 

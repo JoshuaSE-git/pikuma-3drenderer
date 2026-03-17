@@ -1,4 +1,5 @@
 #include "triangle.h"
+#include "display.h"
 
 void int_swap(int *a, int *b) {
   int tmp = *a;
@@ -6,7 +7,19 @@ void int_swap(int *a, int *b) {
   *b = tmp;
 }
 void fill_flat_bottom_triangle(int x0, int y0, int x1, int y1, int x2, int y2,
-                               uint32_t color) {}
+                               uint32_t color) {
+
+  float inverse_slope1 = (float)(x1 - x0) / (float)(y1 - y0);
+  float inverse_slope2 = (float)(x2 - x0) / (float)(y2 - y0);
+
+  float x_start = x0;
+  float x_end = x0;
+  for (int y = y0; y <= y1; y++) {
+    draw_line(x_start, y, x_end, y, color);
+    x_start += inverse_slope1;
+    x_end += inverse_slope2;
+  }
+}
 void fill_flat_top_triangle(int x0, int y0, int x1, int y1, int x2, int y2,
                             uint32_t color) {}
 
@@ -26,7 +39,7 @@ void draw_filled_triangle(int x0, int y0, int x1, int y1, int x2, int y2,
   }
 
   int m_y = y1;
-  int m_x = ((float)((x2 - x1) * (y1 - y0)) / (float)(y2 - y0)) + x0;
+  int m_x = ((float)((x2 - x0) * (y1 - y0)) / (float)(y2 - y0)) + x0;
 
   fill_flat_bottom_triangle(x0, y0, x1, y1, m_x, m_y, color);
   fill_flat_top_triangle(x1, y1, m_x, m_y, x2, y2, color);
