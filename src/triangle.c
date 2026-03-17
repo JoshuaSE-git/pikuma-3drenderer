@@ -21,7 +21,18 @@ void fill_flat_bottom_triangle(int x0, int y0, int x1, int y1, int x2, int y2,
   }
 }
 void fill_flat_top_triangle(int x0, int y0, int x1, int y1, int x2, int y2,
-                            uint32_t color) {}
+                            uint32_t color) {
+  float inverse_slope1 = (float)(x0 - x2) / (float)(y0 - y2);
+  float inverse_slope2 = (float)(x1 - x2) / (float)(y1 - y2);
+
+  float x_start = x2;
+  float x_end = x2;
+  for (int y = y2; y >= y0; y--) {
+    draw_line(x_start, y, x_end, y, color);
+    x_start -= inverse_slope1;
+    x_end -= inverse_slope2;
+  }
+}
 
 void draw_filled_triangle(int x0, int y0, int x1, int y1, int x2, int y2,
                           uint32_t color) {

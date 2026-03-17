@@ -8,7 +8,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define FILENAME "./assets/cube.obj"
+#define FILENAME "./assets/f22.obj"
 #define FOV_FACTOR 640
 
 bool is_running = false;
@@ -136,24 +136,20 @@ void render(void) {
   clear_color_buffer(0xFF000000);
   draw_grid();
 
-  /*
   int num_triangle_faces = array_length(triangles_to_render);
   for (int i = 0; i < num_triangle_faces; i++) {
     triangle_t triangle = triangles_to_render[i];
-    draw_rectangle(triangle.points[0].x, triangle.points[0].y, 3, 3,
-                   0xFFFFA500);
-    draw_rectangle(triangle.points[1].x, triangle.points[1].y, 3, 3,
-                   0xFFFFA500);
-    draw_rectangle(triangle.points[2].x, triangle.points[2].y, 3, 3,
-                   0xFFFFA500);
+    draw_filled_triangle(triangle.points[0].x, triangle.points[0].y,
+                         triangle.points[1].x, triangle.points[1].y,
+                         triangle.points[2].x, triangle.points[2].y, 0xFFFFFFFF
 
+    );
     draw_triangle(triangle.points[0].x, triangle.points[0].y,
                   triangle.points[1].x, triangle.points[1].y,
-                  triangle.points[2].x, triangle.points[2].y, 0xFFFFA500);
-  }
-  */
+                  triangle.points[2].x, triangle.points[2].y, 0xFF000000
 
-  draw_filled_triangle(300, 100, 50, 400, 500, 700, 0xFF00FF00);
+    );
+  }
 
   render_color_buffer();
 
