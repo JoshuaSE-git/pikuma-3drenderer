@@ -39,11 +39,14 @@ void setup(void) {
     is_running = false;
   }
 
+  /*
   bool loaded = load_obj_file_data(FILENAME);
   if (!loaded) {
     fprintf(stderr, "Error loading mesh data from: '%s'", FILENAME);
     is_running = false;
   }
+  */
+  load_cube_mesh_data();
 }
 
 void process_input(void) {
@@ -143,6 +146,7 @@ void update(void) {
 
       transformed_triangle.points[j] = projected_point;
     }
+    transformed_triangle.color = mesh_face.color;
 
     array_push(triangles_to_render, transformed_triangle);
   }
@@ -159,7 +163,7 @@ void render(void) {
       draw_filled_triangle(triangle.points[0].x, triangle.points[0].y,
                            triangle.points[1].x, triangle.points[1].y,
                            triangle.points[2].x, triangle.points[2].y,
-                           0xFF555555
+                           triangle.color
 
       );
     }
