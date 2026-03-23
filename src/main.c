@@ -8,7 +8,7 @@
 #include <SDL2/SDL_timer.h>
 #include <stdint.h>
 
-#define FILENAME "./assets/f22.obj"
+#define FILENAME "./assets/cube.obj"
 #define FOV_FACTOR 640
 
 bool is_running = false;
@@ -17,14 +17,7 @@ int previous_tick = 0;
 
 triangle_t *triangles_to_render = NULL;
 
-typedef enum {
-  WIREFRAME,
-  WIREFRAME_VERTICES,
-  FILLED,
-  FILLED_WIREFRAME
-} RenderSetting;
-
-RenderSetting render_setting = WIREFRAME_VERTICES;
+RenderSetting render_setting = RENDER_WIRE_VERTEX;
 bool culling = true;
 
 void setup(void) {
@@ -65,13 +58,13 @@ void process_input(void) {
     if (event.key.keysym.sym == SDLK_ESCAPE) {
       is_running = false;
     } else if (event.key.keysym.sym == SDLK_1) {
-      render_setting = WIREFRAME_VERTICES;
+      render_setting = RENDER_WIRE_VERTEX;
     } else if (event.key.keysym.sym == SDLK_2) {
-      render_setting = WIREFRAME;
+      render_setting = RENDER_WIRE;
     } else if (event.key.keysym.sym == SDLK_3) {
-      render_setting = FILLED;
+      render_setting = RENDER_FILL;
     } else if (event.key.keysym.sym == SDLK_4) {
-      render_setting = FILLED_WIREFRAME;
+      render_setting = RENDER_FILL_WIRE;
     } else if (event.key.keysym.sym == SDLK_c) {
       culling = true;
     } else if (event.key.keysym.sym == SDLK_d) {
@@ -124,7 +117,6 @@ void update(void) {
       transformed_vertices[j] = transformed_vertex;
     }
 
-    float alignment = 1;
     if (culling == true) {
       vec3_t a = vec3_sub(transformed_vertices[1], transformed_vertices[0]);
       vec3_t b = vec3_sub(transformed_vertices[2], transformed_vertices[0]);
@@ -136,11 +128,10 @@ void update(void) {
 
       vec3_normalize(&normal);
 
-      alignment = vec3_dot(camera_ray, normal);
-    }
-
-    if (alignment < 0) {
-      continue;
+      float alignment = vec3_dot(camera_ray, normal);
+      if (alignment < 0) {
+        continue;
+      }
     }
 
     triangle_t transformed_triangle;
@@ -164,30 +155,30 @@ void render(void) {
   int num_triangle_faces = array_length(triangles_to_render);
   for (int i = 0; i < num_triangle_faces; i++) {
     triangle_t triangle = triangles_to_render[i];
-    if (render_setting == FILLED || render_setting == FILLED_WIREFRAME) {
+    if (render_setting == RENDER_FILL || render_setting == RENDER_FILL_WIRE) {
       draw_filled_triangle(triangle.points[0].x, triangle.points[0].y,
                            triangle.points[1].x, triangle.points[1].y,
                            triangle.points[2].x, triangle.points[2].y,
-                           0xFFFFFFFF
+                           0xFF555555
 
       );
     }
 
-    if (render_setting == WIREFRAME || render_setting == WIREFRAME_VERTICES ||
-        render_setting == FILLED_WIREFRAME) {
+    if (render_setting == RENDER_WIRE || render_setting == RENDER_WIRE_VERTEX ||
+        render_setting == RENDER_FILL_WIRE) {
       draw_triangle(triangle.points[0].x, triangle.points[0].y,
                     triangle.points[1].x, triangle.points[1].y,
-                    triangle.points[2].x, triangle.points[2].y, 0xFF182FFF
+                    triangle.points[2].x, triangle.points[2].y, 0xFFFFFFFF
 
       );
     }
 
-    if (render_setting == WIREFRAME_VERTICES) {
-      draw_rectangle(triangle.points[0].x, triangle.points[0].y, 3, 3,
+    if (render_setting == RENDER_WIRE_VERTEX) {
+      draw_rectangle(triangle.points[0].x - 3, triangle.points[0].y - 3, 6, 6,
                      0xFFFF0000);
-      draw_rectangle(triangle.points[1].x, triangle.points[1].y, 3, 3,
+      draw_rectangle(triangle.points[1].x - 3, triangle.points[1].y - 3, 6, 6,
                      0xFFFF0000);
-      draw_rectangle(triangle.points[2].x, triangle.points[2].y, 3, 3,
+      draw_rectangle(triangle.points[2].x - 3, triangle.points[2].y - 3, 6, 6,
                      0xFFFF0000);
     }
   }

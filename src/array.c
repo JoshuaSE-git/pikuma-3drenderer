@@ -1,5 +1,4 @@
 #include "array.h"
-#include <stdio.h>
 #include <stdlib.h>
 
 #define ARRAY_RAW_DATA(array) ((int *)(array) - 2)

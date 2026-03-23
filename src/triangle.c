@@ -7,7 +7,7 @@ void int_swap(int *a, int *b) {
   *b = tmp;
 }
 void fill_flat_bottom_triangle(int x0, int y0, int x1, int y1, int x2, int y2,
-                               uint32_t color) {
+                               color_t color) {
 
   float inverse_slope1 = (float)(x1 - x0) / (float)(y1 - y0);
   float inverse_slope2 = (float)(x2 - x0) / (float)(y2 - y0);
@@ -21,7 +21,7 @@ void fill_flat_bottom_triangle(int x0, int y0, int x1, int y1, int x2, int y2,
   }
 }
 void fill_flat_top_triangle(int x0, int y0, int x1, int y1, int x2, int y2,
-                            uint32_t color) {
+                            color_t color) {
   float inverse_slope1 = (float)(x0 - x2) / (float)(y0 - y2);
   float inverse_slope2 = (float)(x1 - x2) / (float)(y1 - y2);
 
@@ -35,7 +35,7 @@ void fill_flat_top_triangle(int x0, int y0, int x1, int y1, int x2, int y2,
 }
 
 void draw_filled_triangle(int x0, int y0, int x1, int y1, int x2, int y2,
-                          uint32_t color) {
+                          color_t color) {
   if (y0 > y1) {
     int_swap(&y0, &y1);
     int_swap(&x0, &x1);
