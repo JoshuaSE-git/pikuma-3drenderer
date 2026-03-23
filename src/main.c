@@ -4,8 +4,8 @@
 #include "triangle.h"
 #include "vector.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_timer.h>
-#include <stdbool.h>
 #include <stdint.h>
 
 #define FILENAME "./assets/f22.obj"
@@ -16,6 +16,16 @@ vec3_t camera_position = {0, 0, 0};
 int previous_tick = 0;
 
 triangle_t *triangles_to_render = NULL;
+
+typedef enum {
+  WIREFRAME,
+  WIREFRAME_VERTICES,
+  FILLED,
+  FILLED_WIREFRAME
+} RenderSetting;
+
+RenderSetting render_setting = WIREFRAME_VERTICES;
+bool culling = true;
 
 void setup(void) {
   color_buffer =
@@ -54,6 +64,18 @@ void process_input(void) {
   case SDL_KEYDOWN:
     if (event.key.keysym.sym == SDLK_ESCAPE) {
       is_running = false;
+    } else if (event.key.keysym.sym == SDLK_1) {
+      render_setting = WIREFRAME_VERTICES;
+    } else if (event.key.keysym.sym == SDLK_2) {
+      render_setting = WIREFRAME;
+    } else if (event.key.keysym.sym == SDLK_3) {
+      render_setting = FILLED;
+    } else if (event.key.keysym.sym == SDLK_4) {
+      render_setting = FILLED_WIREFRAME;
+    } else if (event.key.keysym.sym == SDLK_c) {
+      culling = true;
+    } else if (event.key.keysym.sym == SDLK_d) {
+      culling = false;
     }
     break;
   }
@@ -102,17 +124,20 @@ void update(void) {
       transformed_vertices[j] = transformed_vertex;
     }
 
-    vec3_t a = vec3_sub(transformed_vertices[1], transformed_vertices[0]);
-    vec3_t b = vec3_sub(transformed_vertices[2], transformed_vertices[0]);
-    vec3_normalize(&a);
-    vec3_normalize(&b);
+    float alignment = 1;
+    if (culling == true) {
+      vec3_t a = vec3_sub(transformed_vertices[1], transformed_vertices[0]);
+      vec3_t b = vec3_sub(transformed_vertices[2], transformed_vertices[0]);
+      vec3_normalize(&a);
+      vec3_normalize(&b);
 
-    vec3_t camera_ray = vec3_sub(camera_position, transformed_vertices[0]);
-    vec3_t normal = vec3_cross(a, b);
+      vec3_t camera_ray = vec3_sub(camera_position, transformed_vertices[0]);
+      vec3_t normal = vec3_cross(a, b);
 
-    vec3_normalize(&normal);
+      vec3_normalize(&normal);
 
-    float alignment = vec3_dot(camera_ray, normal);
+      alignment = vec3_dot(camera_ray, normal);
+    }
 
     if (alignment < 0) {
       continue;
@@ -139,16 +164,32 @@ void render(void) {
   int num_triangle_faces = array_length(triangles_to_render);
   for (int i = 0; i < num_triangle_faces; i++) {
     triangle_t triangle = triangles_to_render[i];
-    draw_filled_triangle(triangle.points[0].x, triangle.points[0].y,
-                         triangle.points[1].x, triangle.points[1].y,
-                         triangle.points[2].x, triangle.points[2].y, 0xFFFFFFFF
+    if (render_setting == FILLED || render_setting == FILLED_WIREFRAME) {
+      draw_filled_triangle(triangle.points[0].x, triangle.points[0].y,
+                           triangle.points[1].x, triangle.points[1].y,
+                           triangle.points[2].x, triangle.points[2].y,
+                           0xFFFFFFFF
 
-    );
-    draw_triangle(triangle.points[0].x, triangle.points[0].y,
-                  triangle.points[1].x, triangle.points[1].y,
-                  triangle.points[2].x, triangle.points[2].y, 0xFF000000
+      );
+    }
 
-    );
+    if (render_setting == WIREFRAME || render_setting == WIREFRAME_VERTICES ||
+        render_setting == FILLED_WIREFRAME) {
+      draw_triangle(triangle.points[0].x, triangle.points[0].y,
+                    triangle.points[1].x, triangle.points[1].y,
+                    triangle.points[2].x, triangle.points[2].y, 0xFF182FFF
+
+      );
+    }
+
+    if (render_setting == WIREFRAME_VERTICES) {
+      draw_rectangle(triangle.points[0].x, triangle.points[0].y, 3, 3,
+                     0xFFFF0000);
+      draw_rectangle(triangle.points[1].x, triangle.points[1].y, 3, 3,
+                     0xFFFF0000);
+      draw_rectangle(triangle.points[2].x, triangle.points[2].y, 3, 3,
+                     0xFFFF0000);
+    }
   }
 
   render_color_buffer();
